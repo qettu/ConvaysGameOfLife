@@ -5,7 +5,7 @@
 /// </summary>
 ///
 /// TODO: Change int to bool
-public class GameOfLife
+public class ConvaysGameOfLife
 {
     /// <summary>
     /// Main program prints generation tables
