@@ -9,9 +9,9 @@ public class ConvaysGameOfLife
     /// <summary>
     /// Main program prints generation tables
     /// </summary>
+
     public static void Main()
     {
-        int generations = 3;
         bool[,] table =
         {
             {false, false, false, false, false, false },
@@ -22,11 +22,18 @@ public class ConvaysGameOfLife
             {false, false, false, false, false, false }
         };
         PrintTable(table);
+
+        int generations = 5;
         int height = table.GetLength(0);
         int width = table.GetLength(1);
-        bool[,] tableTemp = new bool[6, 6];
+
+        // Choose initialization tables
         bool[,] zeroTable = ZeroTable(width, height);
-        
+        bool[,] tableTemp = zeroTable;
+
+
+        // TODO: move calculation of generations to own function
+        // Calculate generations ("main"-function)
         for (int generation = 0; generation < generations; generation++)
         {
             for (int col = 1; col < width - 1; col++)
@@ -45,9 +52,9 @@ public class ConvaysGameOfLife
                         }
                     }
 
-                    if (table[col, row])
+                    if (table[col, row]) // There cell is its own neighbour. Its value is "true"
                     {
-                        if (neighbours <= 2) // Cell is its own neighbour
+                        if (neighbours <= 2)
                         {
                             tableTemp[col, row] = false;
                         }
@@ -60,21 +67,27 @@ public class ConvaysGameOfLife
                             tableTemp[col, row] = true;
                         }
                     }
-                    else
+                    else // Cell isn't its own neighbour, because cell is "false"
                     {
-                        if (neighbours == 3) // Tässä solu ei ole oma naapurinsa, koska sitä ei ole olemassa
+                        if (neighbours == 3)
                         {
                             tableTemp[col, row] = true;
                         }
                     }
                 }
             }
+
+            // Initializations for next round. Print result
             table = tableTemp;
             tableTemp = zeroTable;
             PrintTable(table);
         }
     }
-    private static void PrintTable(bool[,] table){
+
+
+    // Print table
+    private static void PrintTable(bool[,] table)
+    {
         for (int a = 0; a < 6; a++)
         {
             for (int b = 0; b < 6; b++)
@@ -86,6 +99,8 @@ public class ConvaysGameOfLife
         System.Console.Write("\n");
     }
 
+
+    // Table filled with zeros / falses
     private static bool[,] ZeroTable(int width, int height)
     {
         bool[,] zeroTable = new bool[width, height];
@@ -99,4 +114,68 @@ public class ConvaysGameOfLife
 
         return zeroTable;
     }
+
+
+    // Initialize FULL TABLE with pattern of vertical stripes
+    private static bool[,] VerticalStripesTable(int width, int height)
+    {
+        bool[,] verticalStripesTable = new bool[width, height];
+        // To make state stable, we'll use pattern to borders too.
+        for (int a = 0; a < width; a++)
+        {
+            for (int b = 0; b < height; b++)
+            {
+                if (a % 2 == 1)
+                {
+                    verticalStripesTable[a, b] = true;
+                }
+                else
+                {
+                    verticalStripesTable[a, b] = false;
+                }
+            }
+        }
+
+        return verticalStripesTable;
+    }
+    
+
+    // Initialize TABLE BORDERS with pattern of vertical stripes
+    private static bool[,] VerticalStripesBordersTable(int width, int height)
+    {
+        bool[,] verticalStripesBordersTable = ZeroTable(width, height);
+
+        for (int a = 0; a < width; a++)
+        {
+            if (a % 2 == 1)
+            {
+                verticalStripesBordersTable[a, 0] = true;
+                verticalStripesBordersTable[a, width-1] = true;
+            }
+            else
+            {
+                verticalStripesBordersTable[a, 0] = false;
+                verticalStripesBordersTable[a, width-1] = false;
+            }
+        }
+        if (width % 2 == 1)
+        {
+            for (int b = 0; b < height; b++)
+            {
+                verticalStripesBordersTable[width-1, b] = false;
+                verticalStripesBordersTable[0, b] = false;
+            }
+        }
+        else
+        {
+            for (int b = 0; b < height; b++)
+            {
+                verticalStripesBordersTable[width-1, b] = true;
+                verticalStripesBordersTable[0, b] = false;
+            }
+        }
+
+        return verticalStripesBordersTable;
+    }
+    
 }
