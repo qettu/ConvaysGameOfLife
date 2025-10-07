@@ -1,10 +1,9 @@
 /// @author Niilo Vertainen
 /// @version 3.10.2025
 /// <summary>
-/// Convay's Game Of Life algorithm
+/// Conway's Game Of Life algorithm
 /// </summary>
-///
-/// TODO: Change int to bool
+
 public class ConvaysGameOfLife
 {
     /// <summary>
@@ -12,90 +11,92 @@ public class ConvaysGameOfLife
     /// </summary>
     public static void Main()
     {
-        int generaatiot = 3;
-        int[,] taulukko =
+        int generations = 3;
+        bool[,] table =
         {
-            {0, 0, 0, 0, 0, 0 },
-            {0, 1, 0, 1, 1, 0 },
-            {0, 0, 1, 1, 0, 0 },
-            {0, 1, 0, 0, 0, 0 },
-            {0, 1, 0, 0, 1, 0 },
-            {0, 0, 0, 0, 0, 0 }
+            {false, false, false, false, false, false },
+            {false, true,  false, true,  true,  false },
+            {false, false, true,  true,  false, false },
+            {false, true,  false, false, false, false },
+            {false, true,  false, false, true,  false },
+            {false, false, false, false, false, false }
         };
-        TulostaTaulukko(taulukko);
-        int height = taulukko.GetLength(0);
-        int width = taulukko.GetLength(1);
-        int[,] taulukkoTemp = new int[6, 6];
-        int[,] nollaTaulukko = NollaTaulukko(width, height);
+        PrintTable(table);
+        int height = table.GetLength(0);
+        int width = table.GetLength(1);
+        bool[,] tableTemp = new bool[6, 6];
+        bool[,] zeroTable = ZeroTable(width, height);
         
-        for (int generaatio = 0; generaatio < generaatiot; generaatio++)
+        for (int generation = 0; generation < generations; generation++)
         {
-            for (int sarake = 1; sarake < width - 1; sarake++)
+            for (int col = 1; col < width - 1; col++)
             {
-                for (int rivi = 1; rivi < height - 1; rivi++)
+                for (int row = 1; row < height - 1; row++)
                 {
-                    int naapurit = 0;
-                    for (int x = sarake - 1; x <= sarake + 1; x++)
+                    int neighbours = 0;
+                    for (int x = col - 1; x <= col + 1; x++)
                     {
-                        for (int y = rivi - 1; y <= rivi + 1; y++)
+                        for (int y = row - 1; y <= row + 1; y++)
                         {
-                            naapurit += taulukko[x, y];
+                            if (table[x, y])
+                            {
+                                neighbours += 1;
+                            }
                         }
                     }
 
-                    if (taulukko[sarake, rivi] == 1)
+                    if (table[col, row])
                     {
-                        if (naapurit <= 2) // Tässä solu lasketaan itse naapurikseen, joten nostetaan rajaa 1 -> 2
+                        if (neighbours <= 2) // Cell is its own neighbour
                         {
-                            taulukkoTemp[sarake, rivi] = 0;
+                            tableTemp[col, row] = false;
                         }
-                        else if (naapurit >= 5)
+                        else if (neighbours >= 5)
                         {
-                            taulukkoTemp[sarake, rivi] = 0;
+                            tableTemp[col, row] = false;
                         }
                         else
                         {
-                            taulukkoTemp[sarake, rivi] = 1;
+                            tableTemp[col, row] = true;
                         }
                     }
                     else
                     {
-                        if (naapurit == 3) // Tässä solu ei ole oma naapurinsa, koska sitä ei ole olemassa
+                        if (neighbours == 3) // Tässä solu ei ole oma naapurinsa, koska sitä ei ole olemassa
                         {
-                            taulukkoTemp[sarake, rivi] = 1;
+                            tableTemp[col, row] = true;
                         }
                     }
                 }
             }
-            taulukko = taulukkoTemp;
-            taulukkoTemp = nollaTaulukko;
-            TulostaTaulukko(taulukko);
+            table = tableTemp;
+            tableTemp = zeroTable;
+            PrintTable(table);
         }
     }
-    private static void TulostaTaulukko(int[,] taulukko){
+    private static void PrintTable(bool[,] table){
         for (int a = 0; a < 6; a++)
         {
             for (int b = 0; b < 6; b++)
             {
-                System.Console.Write(taulukko[a, b] == 1 ? " M" : " -");
+                System.Console.Write(table[a, b] ? " M" : " -");
             }
             System.Console.Write("\n");
         }
         System.Console.Write("\n");
     }
 
-    private static int[,] NollaTaulukko(int width, int height)
+    private static bool[,] ZeroTable(int width, int height)
     {
-        int[,] table = new int[width, height];
+        bool[,] zeroTable = new bool[width, height];
         for (int a = 0; a < width; a++)
         {
             for (int b = 0; b < height; b++)
             {
-                table[a, b] = 0;
+                zeroTable[a, b] = false;
             }
         }
 
-        TulostaTaulukko(table);
-        return table;
+        return zeroTable;
     }
 }
